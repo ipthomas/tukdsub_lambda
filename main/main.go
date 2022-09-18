@@ -24,8 +24,8 @@ func main() {
 }
 func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	tukint.Set_AWS_Env_Vars(DB_URL, DSUB_BROKER_URL, PIX_MANAGER_URL, NHS_OID, REGIONAL_OID)
-	dsubmsg := tukint.EventMessage{Message: req.Body}
-	return handle_Response(dsubmsg.NewDSUBBrokerEvent())
+	dsubevent := tukdsub.DSUBEvent{Message: req.Body}
+	return handle_Response(tukdsub.NewEvent(&dsubevent))
 }
 func handle_Response(err error) (*events.APIGatewayProxyResponse, error) {
 	resp := events.APIGatewayProxyResponse{Headers: tukint.SOAP_XML_Content_Type_EventHeaders, MultiValueHeaders: map[string][]string{}, IsBase64Encoded: false}
