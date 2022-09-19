@@ -14,6 +14,6 @@ require (
 	github.com/ipthomas/tukcnst v1.0.10 // indirect
 	github.com/ipthomas/tukdbint v1.0.11 // indirect
 	github.com/ipthomas/tukhttp v1.0.10 // indirect
-	github.com/ipthomas/tukpixm v1.0.11 // indirect
+	github.com/ipthomas/tukpixm v1.1.0 // indirect
 	github.com/ipthomas/tukutil v1.0.10 // indirect
 )

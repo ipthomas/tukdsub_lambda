@@ -17,6 +17,8 @@ github.com/ipthomas/tukint v1.0.11 h1:rEHFf+Hd2rLh9+cczTQUQ6REbExksmrgM1NacI2Ic/
 github.com/ipthomas/tukint v1.0.11/go.mod h1:rM02rWJ/4r1UpfAk3ZTIFHfH/LC/Kluc2tVVMdD9FFQ=
 github.com/ipthomas/tukpixm v1.0.11 h1:CJ+cw14DweGSGQjT142tfnZFdQTfusJYWOe2a/UehZw=
 github.com/ipthomas/tukpixm v1.0.11/go.mod h1:vQUFUiMkqwm0RgXBMlQJ+U9xAVlzQcAy7FknpX6ux6c=
+github.com/ipthomas/tukpixm v1.1.0 h1:2kd72CoaIS3piL0zUUrE556bHBGaBKl89jXRjJlzqCs=
+github.com/ipthomas/tukpixm v1.1.0/go.mod h1:vQUFUiMkqwm0RgXBMlQJ+U9xAVlzQcAy7FknpX6ux6c=
 github.com/ipthomas/tukutil v1.0.10 h1:9wVHnyzERsTLhzz0Ob5HDoXFYzAH49ulw9iWeZSo3TA=
 github.com/ipthomas/tukutil v1.0.10/go.mod h1:O3bE0LCck8gtABMNprLwNRtfrFh7n0ewMfYioxsj6PQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

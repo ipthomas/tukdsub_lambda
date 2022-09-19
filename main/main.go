@@ -25,6 +25,7 @@ func main() {
 func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	tukint.Set_AWS_Env_Vars(DB_URL, DSUB_BROKER_URL, PIX_MANAGER_URL, NHS_OID, REGIONAL_OID)
 	dsubevent := tukdsub.DSUBEvent{Message: req.Body}
+	tukdsub.SetRegOID(REGIONAL_OID)
 	return handle_Response(tukdsub.NewEvent(&dsubevent))
 }
 func handle_Response(err error) (*events.APIGatewayProxyResponse, error) {
