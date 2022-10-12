@@ -3,40 +3,54 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
+	"github.com/ipthomas/tukcnst"
+	"github.com/ipthomas/tukdbint"
 	"github.com/ipthomas/tukdsub"
-	"github.com/ipthomas/tukint"
+	"github.com/ipthomas/tukutil"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-)
-
-var (
-	DB_URL          = "https://5k2o64mwt5.execute-api.eu-west-1.amazonaws.com/beta/"
-	DSUB_BROKER_URL = "http://spirit-test-01.tianispirit.co.uk:8081/SpiritXDSDsub/Dsub"
-	PIX_MANAGER_URL = "http://spirit-test-01.tianispirit.co.uk:8081/SpiritPIXFhir/r4/Patient"
-	REGIONAL_OID    = "2.16.840.1.113883.2.1.3.31.2.1.1"
-	NHS_OID         = "2.16.840.1.113883.2.1.4.1"
 )
 
 func main() {
 	lambda.Start(Handle_Request)
 }
 func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	tukint.Set_AWS_Env_Vars(DB_URL, DSUB_BROKER_URL, PIX_MANAGER_URL, NHS_OID, REGIONAL_OID)
-	dsubevent := tukdsub.DSUBEvent{Message: req.Body}
-	tukdsub.SetRegOID(REGIONAL_OID)
-	return handle_Response(tukdsub.NewDsubEvent(&dsubevent))
-}
-func handle_Response(err error) (*events.APIGatewayProxyResponse, error) {
-	resp := events.APIGatewayProxyResponse{Headers: tukint.SOAP_XML_Content_Type_EventHeaders, MultiValueHeaders: map[string][]string{}, IsBase64Encoded: false}
-	if err == nil {
-		resp.StatusCode = http.StatusOK
-		resp.Body = tukdsub.DSUB_ACK_TEMPLATE
-	} else {
-		resp.StatusCode = http.StatusInternalServerError
-		resp.Body = err.Error()
+	dsubEvent := tukdsub.DSUBEvent{
+		Action:          req.QueryStringParameters[tukcnst.QUERY_PARAM_ACTION],
+		BrokerURL:       os.Getenv(tukcnst.AWS_ENV_DSUB_BROKER_URL),
+		ConsumerURL:     os.Getenv(tukcnst.AWS_ENV_DSUB_CONSUMER_URL),
+		PDQ_SERVER_URL:  os.Getenv(tukcnst.AWS_ENV_PDQ_SERVER_URL),
+		PDQ_SERVER_TYPE: os.Getenv(tukcnst.AWS_ENV_PDQ_SERVER_TYPE),
+		REG_OID:         os.Getenv(tukcnst.AWS_ENV_REG_OID),
+		NHS_OID:         os.Getenv(tukcnst.AWS_ENV_NHS_OID),
+		Pathway:         req.QueryStringParameters[tukcnst.QUERY_PARAM_PATHWAY],
+		EventMessage:    req.Body,
+		DBConnection:    tukdbint.TukDBConnection{DB_URL: os.Getenv(tukcnst.AWS_ENV_TUK_DB_URL)},
+	}
+
+	if req.QueryStringParameters[tukcnst.QUERY_PARAM_EXPRESSION] != "" {
+		var exs []string
+		if strings.Contains(req.QueryStringParameters[tukcnst.QUERY_PARAM_EXPRESSION], "|") {
+			reqexs := strings.Split(req.QueryStringParameters[tukcnst.QUERY_PARAM_EXPRESSION], "|")
+			exs = append(exs, reqexs...)
+		} else {
+			exs = append(exs, req.QueryStringParameters[tukcnst.QUERY_PARAM_EXPRESSION])
+		}
+		dsubEvent.Expressions = exs
+	}
+	log.Println("Set Expressions")
+	tukutil.Log(dsubEvent.Expressions)
+	if err := tukdsub.New_Transaction(&dsubEvent); err != nil {
 		log.Println(err.Error())
 	}
-	return &resp, err
+
+	apiResp := events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       string(dsubEvent.Response),
+	}
+	return &apiResp, nil
 }
