@@ -21,15 +21,15 @@ func main() {
 func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	dsubEvent := tukdsub.DSUBEvent{
 		Action:          req.QueryStringParameters[tukcnst.QUERY_PARAM_ACTION],
-		BrokerURL:       os.Getenv(tukcnst.AWS_ENV_DSUB_BROKER_URL),
-		ConsumerURL:     os.Getenv(tukcnst.AWS_ENV_DSUB_CONSUMER_URL),
-		PDQ_SERVER_URL:  os.Getenv(tukcnst.AWS_ENV_PDQ_SERVER_URL),
-		PDQ_SERVER_TYPE: os.Getenv(tukcnst.AWS_ENV_PDQ_SERVER_TYPE),
-		REG_OID:         os.Getenv(tukcnst.AWS_ENV_REG_OID),
-		NHS_OID:         os.Getenv(tukcnst.AWS_ENV_NHS_OID),
+		BrokerURL:       os.Getenv(tukcnst.ENV_DSUB_BROKER_URL),
+		ConsumerURL:     os.Getenv(tukcnst.ENV_DSUB_CONSUMER_URL),
+		PDQ_SERVER_URL:  os.Getenv(tukcnst.ENV_PDQ_SERVER_URL),
+		PDQ_SERVER_TYPE: os.Getenv(tukcnst.ENV_PDQ_SERVER_TYPE),
+		REG_OID:         os.Getenv(tukcnst.ENV_REG_OID),
+		NHS_OID:         os.Getenv(tukcnst.ENV_NHS_OID),
 		Pathway:         req.QueryStringParameters[tukcnst.QUERY_PARAM_PATHWAY],
 		EventMessage:    req.Body,
-		DBConnection:    tukdbint.TukDBConnection{DB_URL: os.Getenv(tukcnst.AWS_ENV_TUK_DB_URL)},
+		DBConnection:    tukdbint.TukDBConnection{DB_URL: os.Getenv(tukcnst.ENV_TUK_DB_URL)},
 	}
 
 	if req.QueryStringParameters[tukcnst.QUERY_PARAM_EXPRESSION] != "" {
